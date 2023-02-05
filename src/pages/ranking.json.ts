@@ -1,5 +1,5 @@
-import pg from 'pg';
 import type { APIRoute } from 'astro';
+import * as pg from 'pg';
 
 export const get: APIRoute = async () => {
   const client = new pg.Client({
