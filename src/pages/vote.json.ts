@@ -1,8 +1,9 @@
 import type { APIRoute } from 'astro';
-import * as pg from 'pg';
+import pg from 'pg';
+const Client = pg.Client;
 
 export const post: APIRoute = async ({ request }) => {
-  const client = new pg.Client({
+  const client = new Client({
     connectionString: import.meta.env.DB_URI,
   });
 
@@ -26,7 +27,7 @@ export const post: APIRoute = async ({ request }) => {
   } catch (e) {
     console.error(e);
 
-    client.end();
+    await client.end();
 
     return new Response(JSON.stringify({ message: 'Something went wrong!' }), {
       status: 400,
