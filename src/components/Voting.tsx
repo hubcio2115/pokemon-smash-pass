@@ -42,8 +42,6 @@ const Voting: FunctionalComponent<VotingProps> = ({ domain }) => {
     })();
   };
 
-  console.log(pokemonNamesRef.current);
-
   return !!pokemonNamesRef.current.length ? (
     <div class="flex flex-col items-center gap-4">
       <h2 class="mb-10 text-3xl text-white">
