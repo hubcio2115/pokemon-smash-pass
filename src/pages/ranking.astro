@@ -1,0 +1,56 @@
+---
+import type { QueryResult } from 'pg';
+import { getDomainUrl } from '../utils/utils';
+import MainLayout from '../layouts/MainLayout.astro';
+
+const { request } = Astro;
+
+const ranking = await fetch(`${getDomainUrl(request)}/ranking.json`, {
+  method: 'GET',
+});
+
+const {
+  data: { rows },
+} = await ranking.json();
+---
+
+<MainLayout title="Ranking">
+  <div class="flex flex-auto mb-4">
+    <table class="w-full">
+      <tbody class="flex flex-col px-12">
+        {
+          rows.map(
+            (
+              row: { pokemon_id: string; votes_percentage: string },
+              index: number,
+            ): Element => (
+              <tr class="relative border-white border-x border-t last-of-type:border-b flex items-center justify-between">
+                <td class="absolute top-0 text-white px-2 text-center rounded-br-md  bg-gray-900">
+                  <p>{index + 1}</p>
+                </td>
+                <td>
+                  <img
+                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                      row.pokemon_id + 1
+                    }.png`}
+                    alt="pokemon_img"
+                    height="150"
+                    width="150"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                </td>
+
+                <td class="text-white mr-10 text-2xl">
+                  {Math.floor(
+                    (parseFloat(row.votes_percentage) + Number.EPSILON) * 100,
+                  ) / 100}
+                  %
+                </td>
+              </tr>
+            ),
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+</MainLayout>
