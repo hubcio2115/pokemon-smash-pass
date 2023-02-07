@@ -45,6 +45,8 @@ const Voting: FunctionalComponent<VotingProps> = ({ domain }) => {
     })(),
   );
 
+  const [isDisplaying, setIsDisplaying] = useState(true);
+
   const handleVote = (vote: 'smash' | 'pass') => {
     const newPokemonNames = pokemonNamesRef.current.filter(
       (pokemon) =>
@@ -75,11 +77,17 @@ const Voting: FunctionalComponent<VotingProps> = ({ domain }) => {
         }),
       });
 
+      if (
+        !pokemonNamesRef.current.length &&
+        currentPokemon.id === nextPokemon.current.id
+      )
+        setIsDisplaying(false);
+
       if (import.meta.env.DEV) console.log(res);
     })();
   };
 
-  return !!pokemonNamesRef.current.length ? (
+  return isDisplaying ? (
     <div class="flex flex-col items-center gap-4">
       <h2 class="mb-10 text-3xl text-white">
         {currentPokemon.name.charAt(0).toUpperCase() +
