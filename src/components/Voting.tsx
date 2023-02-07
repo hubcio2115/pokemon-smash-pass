@@ -2,43 +2,80 @@ import type { FunctionalComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import pokemonNames from '../data.json';
 
+type Pokemon = {
+  id: number;
+  name: string;
+};
+
 type VotingProps = {
   domain: string;
 };
 
 const Voting: FunctionalComponent<VotingProps> = ({ domain }) => {
   const pokemonNamesRef = useRef(pokemonNames);
-  const [currentPokemon, setCurrentPokemon] = useState<{
-    id: number;
-    name: string;
-  }>(pokemonNames[Math.floor(Math.random() * pokemonNamesRef.current.length)]);
+  const [currentPokemon, setCurrentPokemon] = useState<Pokemon>(
+    pokemonNames[Math.floor(Math.random() * pokemonNamesRef.current.length)],
+  );
+
+  const [image, setImage] = useState(
+    (() => {
+      const tempImage = new Image();
+      tempImage.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${currentPokemon.id}.png`;
+      return tempImage;
+    })(),
+  );
+
+  const nextPokemon = useRef(
+    (() => {
+      const newPokemonNames = pokemonNamesRef.current.filter(
+        (pokemon) => pokemon.id !== currentPokemon.id,
+      );
+
+      return newPokemonNames[
+        Math.floor(Math.random() * newPokemonNames.length)
+      ];
+    })(),
+  );
+
+  const nextImage = useRef(
+    (() => {
+      const tempImage = new Image();
+      tempImage.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nextPokemon.current.id}.png`;
+      return tempImage;
+    })(),
+  );
 
   const handleVote = (vote: 'smash' | 'pass') => {
     const newPokemonNames = pokemonNamesRef.current.filter(
-      (pokemon) => pokemon.name !== currentPokemon.name,
+      (pokemon) =>
+        pokemon.id !== currentPokemon.id &&
+        pokemon.id !== nextPokemon.current.id,
     );
-
     pokemonNamesRef.current = newPokemonNames;
 
-    const newIndex = Math.floor(Math.random() * newPokemonNames.length);
-    setCurrentPokemon(newPokemonNames[newIndex]);
+    setCurrentPokemon(nextPokemon.current);
+    setImage(nextImage.current);
+
+    if (!!newPokemonNames.length) {
+      const newPokemon =
+        newPokemonNames[Math.floor(Math.random() * newPokemonNames.length)];
+      nextPokemon.current = newPokemon;
+
+      const newImage = new Image();
+      newImage.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${newPokemon.id}.png`;
+      nextImage.current = newImage;
+    }
 
     (async () => {
-      try {
-        const res = await fetch(`${domain}/vote.json`, {
-          method: 'POST',
-          body: JSON.stringify({
-            pokemon_id: currentPokemon.id,
-            vote: vote === 'smash',
-          }),
-        });
+      const res = await fetch(`${domain}/vote.json`, {
+        method: 'POST',
+        body: JSON.stringify({
+          pokemon_id: currentPokemon.id,
+          vote: vote === 'smash',
+        }),
+      });
 
-        if (import.meta.env.DEV) console.log(res);
-      } catch (e) {
-        if (import.meta.env.DEV) console.log(e);
-
-        setCurrentPokemon((prev) => prev);
-      }
+      if (import.meta.env.DEV) console.log(res);
     })();
   };
 
@@ -50,9 +87,7 @@ const Voting: FunctionalComponent<VotingProps> = ({ domain }) => {
       </h2>
 
       <img
-        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-          currentPokemon.id + 1
-        }.png`}
+        src={image.src}
         alt="pokemon"
         height="300"
         width="300"
