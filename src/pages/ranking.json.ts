@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
+import { env } from '../env';
 import pg from 'pg';
 const Client = pg.Client;
 
 export const get: APIRoute = async () => {
   const client = new Client({
-    connectionString: import.meta.env.DB_URI,
+    connectionString: env.DB_URI,
   });
 
   await client.connect();
