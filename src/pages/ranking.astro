@@ -14,7 +14,7 @@ const {
 ---
 
 <MainLayout title="Ranking">
-  <div class="flex flex-auto mb-4">
+  <div class="mb-4 flex flex-auto">
     <table class="w-full">
       <tbody class="flex flex-col px-12">
         {
@@ -23,8 +23,8 @@ const {
               row: { pokemon_id: string; votes_percentage: string },
               index: number,
             ): Element => (
-              <tr class="relative border-white border-x border-t last-of-type:border-b flex items-center justify-between">
-                <td class="absolute top-0 text-white px-2 text-center rounded-br-md  bg-gray-900">
+              <tr class="relative flex items-center justify-between border-x border-t border-white last-of-type:border-b">
+                <td class="absolute top-0 rounded-br-md bg-gray-900 px-2 text-center  text-white">
                   <p>{index + 1}</p>
                 </td>
                 <td>
@@ -39,7 +39,7 @@ const {
                   />
                 </td>
 
-                <td class="text-white mr-10 text-2xl">
+                <td class="mr-10 text-2xl text-white">
                   {Math.floor(
                     (parseFloat(row.votes_percentage) + Number.EPSILON) * 100,
                   ) / 100}

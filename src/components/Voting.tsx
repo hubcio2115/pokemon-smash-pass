@@ -104,14 +104,14 @@ const Voting: FunctionalComponent<VotingProps> = ({ domain }) => {
 
       <div class="flex w-full justify-between">
         <button
-          class="rounded-md bg-green-500 py-3 px-6 text-white"
+          class="rounded-md bg-green-500 px-6 py-3 text-white"
           onClick={() => handleVote('smash')}
         >
           Smash
         </button>
 
         <button
-          class="rounded-md bg-red-500 py-3 px-6 text-white"
+          class="rounded-md bg-red-500 px-6 py-3 text-white"
           onClick={() => handleVote('pass')}
         >
           Pass
